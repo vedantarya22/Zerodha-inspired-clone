@@ -12,6 +12,18 @@ function ProtectedRoute({children}) {
   const [cookies,removeCookie] = useCookies(["token"]);
     const [verified, setVerified] = useState("loading");
      const {  logout } = useAuth();
+
+
+    const API_BASE =
+    process.env.NODE_ENV === "development"
+      ? process.env.REACT_APP_API_LOCAL
+      : process.env.REACT_APP_API_PROD;
+
+  const FRONTEND_BASE =
+    process.env.NODE_ENV === "development"
+      ? process.env.REACT_APP_FRONTEND_LOCAL
+      : process.env.REACT_APP_FRONTEND_PROD;
+
   
   useEffect(()=>{
     const verifyCookie = async()=>{
@@ -25,21 +37,21 @@ function ProtectedRoute({children}) {
 
           try{
             console.log("SENDING TOKEN TO BACKEND…");
-          const {data} = await axios.post(
-            "http://localhost:3002/",
-            {},
-            {withCredentials:true}
-          );
+           const { data } = await axios.post(
+          `${API_BASE}/`,
+          {},
+          { withCredentials: true }
+        );
             console.log("BACKEND RESPONSE:", data);
           const {status,user} = data;
           setVerified(status);
           return status ? toast(`Welcome`,
             {position:"top-right",}) 
-            : (removeCookie("token"),window.location.href = "http://localhost:5174/login");
+            : (removeCookie("token"),window.location.href = `${FRONTEND_BASE}/login`);
           }catch(err){
             setVerified(false);
             removeCookie("token");
-            window.location.href = "http://localhost:5174/login";
+            window.location.href = `${FRONTEND_BASE}/login`;
           }
         };
 

@@ -1,23 +1,28 @@
-import React from 'react';
-import { positions } from '../data/data';
-import { useState,useEffect } from 'react';
+import React from "react";
+import { positions } from "../data/data";
+import { useState, useEffect } from "react";
 
 import axios from "axios";
 
 function Positions() {
-    
-        const [allPositions,setAllPositions] = useState([]);
+  const [allPositions, setAllPositions] = useState([]);
 
-        useEffect(()=>{
-        axios.get("http://localhost:3002/allPositions").then((res)=>{
-          console.log(res.data);
-          setAllPositions(res.data);
-        })
-      },[]);
-  
-  
-  return ( 
-        <>
+  useEffect(() => {
+    const API_BASE =
+      process.env.NODE_ENV === "development"
+        ? process.env.REACT_APP_API_LOCAL
+        : process.env.REACT_APP_API_PROD;
+
+    axios
+      .get(`${API_BASE}/allPositions`)
+      .then((res) => {
+        setAllOrders(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  return (
+    <>
       <h3 className="title">Positions ({allPositions.length})</h3>
 
       <div className="order-table">
@@ -31,32 +36,32 @@ function Positions() {
             <th>P&L</th>
             <th>Chg.</th>
           </tr>
-           {allPositions.map((stock,index)=>{
-                        const currValue = stock.price * stock.qty;
-                        const isProfit = currValue-stock.avg * stock.qty >= 0.0;
-                        const profClass = isProfit ? "profit": "loss";
-                        const dayClass = stock.isLoss ? "loss" : "profit";
+          {allPositions.map((stock, index) => {
+            const currValue = stock.price * stock.qty;
+            const isProfit = currValue - stock.avg * stock.qty >= 0.0;
+            const profClass = isProfit ? "profit" : "loss";
+            const dayClass = stock.isLoss ? "loss" : "profit";
 
-                        return(
-                      <tr key={index} >
-                        <td>{stock.product}</td>
-                        <td>{stock.name}</td>
-                        <td>{stock.qty}</td>
-                        <td>{stock.avg.toFixed(2)}</td>
-                        <td>{stock.price.toFixed(2)}</td>
-                        
-                        <td className={profClass}>{(currValue-stock.avg * stock.qty).toFixed(2)}</td>
-                        
-                        <td className={dayClass}>{stock.day}</td>
-                        
-                    </tr>
-                        )
+            return (
+              <tr key={index}>
+                <td>{stock.product}</td>
+                <td>{stock.name}</td>
+                <td>{stock.qty}</td>
+                <td>{stock.avg.toFixed(2)}</td>
+                <td>{stock.price.toFixed(2)}</td>
 
-                    })}
+                <td className={profClass}>
+                  {(currValue - stock.avg * stock.qty).toFixed(2)}
+                </td>
+
+                <td className={dayClass}>{stock.day}</td>
+              </tr>
+            );
+          })}
         </table>
       </div>
     </>
-     );
+  );
 }
 
 export default Positions;

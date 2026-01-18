@@ -34,7 +34,7 @@ module.exports.Login = async(req,res,next)=>{
             return res.json({message:"All fields are required"})
         }
         const user = await UsersModel.findOne({email});
-        console.log(user);
+        
         if(!user){
             return res.json({message:"Incorrect password or email"})
         }

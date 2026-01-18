@@ -6,9 +6,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) =>{
       const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
+       const FRONTEND_BASE =
+    process.env.NODE_ENV === "development"
+      ? process.env.REACT_APP_FRONTEND_LOCAL
+      : process.env.REACT_APP_FRONTEND_PROD;
+
        const logout = () => {
          removeCookie("token", { path: "/" });
-         window.location.href = "http://localhost:5174/login";
+         window.location.href =`${FRONTEND_BASE}/login`;
         };
 
         return(

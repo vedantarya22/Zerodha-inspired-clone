@@ -1,92 +1,96 @@
-import React from 'react';
+import React from "react";
 // import { holdings } from '../data/data';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { VerticalGraph } from './VerticalGraph';
+import { VerticalGraph } from "./VerticalGraph";
 
 function Holdings() {
+  const [allHoldings, setAllHoldings] = useState([]);
 
-    const [allHoldings,setAllHoldings] = useState([]);
+  useEffect(() => {
+    const API_BASE =
+      process.env.NODE_ENV === "development"
+        ? process.env.REACT_APP_API_LOCAL
+        : process.env.REACT_APP_API_PROD;
 
-    useEffect(()=>{
-      axios.get("http://localhost:3002/allHoldings").then((res)=>{
+    axios
+      .get(`${API_BASE}/allHoldings`)
+      .then((res) => {
         console.log(res.data);
         setAllHoldings(res.data);
       })
-    },[]);
+      .catch((err) => console.log(err));
+  }, []);
 
-    // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-        const labels = allHoldings.map((subArray)=>subArray["name"]); // will contain all holding names
+  // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  const labels = allHoldings.map((subArray) => subArray["name"]); // will contain all holding names
 
-        const data = {
-          labels,
-          datasets:[
-                {
-                    label: 'Stock Price',
-                    data: allHoldings.map((stock)=>stock.price),
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                },
-          ]
-        }
-// export const data = {
-//   labels,
-//   datasets: [
-//     {
-//       label: 'Dataset 1',
-//       data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-//       backgroundColor: 'rgba(255, 99, 132, 0.5)',
-//     },
-//     {
-//       label: 'Dataset 2',
-//       data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-//       backgroundColor: 'rgba(53, 162, 235, 0.5)',
-//     },
-//   ],
-// };
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Stock Price",
+        data: allHoldings.map((stock) => stock.price),
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
+  // export const data = {
+  //   labels,
+  //   datasets: [
+  //     {
+  //       label: 'Dataset 1',
+  //       data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+  //       backgroundColor: 'rgba(255, 99, 132, 0.5)',
+  //     },
+  //     {
+  //       label: 'Dataset 2',
+  //       data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+  //       backgroundColor: 'rgba(53, 162, 235, 0.5)',
+  //     },
+  //   ],
+  // };
 
-  
+  return (
+    <>
+      <h3 className="title">Holdings ({allHoldings.length})</h3>
 
-  return ( 
-        <>
-            <h3 className='title'>Holdings ({allHoldings.length})</h3>
+      <div className="order-table">
+        <table>
+          <tr>
+            <th>Instrument</th>
+            <th>Qty.</th>
+            <th>Avg. cost</th>
+            <th>LTP</th>
+            <th>Cur. val</th>
+            <th>P&L</th>
+            <th>Net chg.</th>
+            <th>Day chg.</th>
+          </tr>
+          {allHoldings.map((stock, index) => {
+            const currValue = stock.price * stock.qty;
+            const isProfit = currValue - stock.avg * stock.qty >= 0.0;
+            const profClass = isProfit ? "profit" : "loss";
+            const dayClass = stock.isLoss ? "loss" : "profit";
 
-            <div className="order-table">
-                <table>
-                    <tr>
-                        <th>Instrument</th>
-                        <th>Qty.</th>
-                        <th>Avg. cost</th>
-                        <th>LTP</th>
-                        <th>Cur. val</th>
-                        <th>P&L</th>
-                        <th>Net chg.</th>
-                        <th>Day chg.</th>
-                    </tr>
-                    {allHoldings.map((stock,index)=>{
-                        const currValue = stock.price * stock.qty;
-                        const isProfit = currValue-stock.avg * stock.qty >= 0.0;
-                        const profClass = isProfit ? "profit": "loss";
-                        const dayClass = stock.isLoss ? "loss" : "profit";
+            return (
+              <tr key={index}>
+                <td>{stock.name}</td>
+                <td>{stock.qty}</td>
+                <td>{stock.avg.toFixed(2)}</td>
+                <td>{stock.price.toFixed(2)}</td>
+                <td>{currValue.toFixed(2)}</td>
+                <td className={profClass}>
+                  {(currValue - stock.avg * stock.qty).toFixed(2)}
+                </td>
+                <td className={profClass}>{stock.net}</td>
+                <td className={dayClass}>{stock.net}</td>
+              </tr>
+            );
+          })}
+        </table>
+      </div>
 
-                        return(
-                            <tr key={index} >
-                        <td>{stock.name}</td>
-                        <td>{stock.qty}</td>
-                        <td>{stock.avg.toFixed(2)}</td>
-                        <td>{stock.price.toFixed(2)}</td>
-                        <td>{currValue.toFixed(2)}</td>
-                        <td className={profClass}>{(currValue-stock.avg * stock.qty).toFixed(2)}</td>
-                        <td className={profClass}>{stock.net}</td>
-                        <td className={dayClass}>{stock.net}</td>
-                        
-                    </tr>
-                        )
-
-                    })}
-                </table>
-            </div>
-
-            
       <div className="row">
         <div className="col">
           <h5>
@@ -106,10 +110,9 @@ function Holdings() {
         </div>
       </div>
 
-      <VerticalGraph data={data}/>
-        
-        </>
-     );
+      <VerticalGraph data={data} />
+    </>
+  );
 }
 
 export default Holdings;
