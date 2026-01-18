@@ -1,0 +1,22 @@
+.input-group-text {
+  background-color: transparent !important;
+  border: none !important;
+}
+.input-group .fa-solid {
+  color: #6c757d; /* matches placeholder color */
+}
+
+
+ 
+  th, td {
+    padding: 10px; /* increase/decrease as needed */
+    text-align: left;
+  }
+  
+  tr{
+    border-bottom: 1px solid lightgray;
+  }
+
+  thead{
+    background-color: #f6f6f6;
+  }

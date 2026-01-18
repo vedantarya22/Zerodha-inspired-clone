@@ -1,0 +1,134 @@
+import React, { useState } from "react";
+import OpenAccount from "../OpenAccount";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+
+
+function Signup() {
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState({
+    email: "",
+    password: "",
+  });
+ 
+  const { email, password } = inputValue;
+  const handleOnChange = (e) => {
+    const { name, value } = e.target; // e.target.name, e.target.value
+    setInputValue({
+      ...inputValue,
+      [name]: value,
+    });
+  };
+
+  const handleError = (err) => {
+    toast.error(err, {
+      position: "bottom-left",
+    });
+  };
+
+  const handleSuccess = (msg) => {
+    toast.success(msg, {
+      position: "bottom-right",
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3002/signup",
+        {
+          ...inputValue,
+        },
+        { withCredentials: true }
+      );
+
+      const { success, message } = data;
+      if (success) {
+        handleSuccess(message);
+        setTimeout(() => {
+           window.location.href = "http://localhost:5173/";
+        }, 1000);
+      } else {
+        handleError(message);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    setInputValue({
+      ...inputValue,
+      email: "",
+      password: "",
+    });
+  };
+
+  return (
+    <>
+      <div className="container mt-5 mb-5 " style={{ width: "60%" }}>
+        <div className="text-center mb-5">
+          <h2>Open a free demat and trading account online</h2>
+          <h5 className="text-muted">
+            Start investing brokerage free and join a community of 1.6+ crore
+            investors and traders
+          </h5>
+        </div>
+
+        <div className="row">
+          <div className="col">
+            <img src="\media\account_open.svg" alt="" />
+          </div>
+          <div className="col">
+            <h3>Signup now</h3>
+            <p className="text-muted">Or track your existing application</p>
+
+            {/* SIGNUP FORM */}
+
+            <form action="" onSubmit={handleSubmit}>
+              <div class="form-floating mb-3 mt-3 ">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={handleOnChange}
+                />
+                <label htmlFor="email">Email address</label>
+              </div>
+              <div class="form-floating">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={handleOnChange}
+                />
+                <label htmlFor="password">Password</label>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg mt-3"
+                style={{ width: "70%" }}
+              >
+                Sign Up
+              </button>
+
+              <p className="mt-2">
+                Already have an account? <Link to={"/login"}>Login</Link>
+              </p>
+            </form>
+            <ToastContainer />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default Signup;
