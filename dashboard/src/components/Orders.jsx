@@ -7,9 +7,9 @@ function Orders() {
 
   useEffect(() => {
     const API_BASE =
-      process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_API_LOCAL
-        : process.env.REACT_APP_API_PROD;
+  import.meta.env.DEV
+    ? import.meta.env.VITE_API_LOCAL
+    : import.meta.env.VITE_API_PROD;
 
     axios
       .get(`${API_BASE}/allOrders`)

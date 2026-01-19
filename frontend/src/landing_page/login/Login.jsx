@@ -28,11 +28,19 @@ function Login() {
       position: "bottom-left",
     });
 
+    const API_BASE = import.meta.env.DEV
+  ? import.meta.env.VITE_API_LOCAL
+  : import.meta.env.VITE_API_PROD;
+
+const DASHBOARD_BASE = import.meta.env.DEV
+  ? import.meta.env.VITE_DASHBOARD_LOCAL
+  : import.meta.env.VITE_DASHBOARD_PROD;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:3002/login",
+         `${API_BASE}/login`,
         {
           ...inputValue,
         },
@@ -43,7 +51,7 @@ function Login() {
       if (success) {
         handleSuccess(message);
         setTimeout(() => {
-          window.location.href = "http://localhost:5173/";
+          window.location.href = `${DASHBOARD_BASE}/`;
         }, 1000);
       } else {
         handleError(message);

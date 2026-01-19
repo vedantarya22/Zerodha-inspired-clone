@@ -7,9 +7,9 @@ export const AuthProvider = ({children}) =>{
       const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
        const FRONTEND_BASE =
-    process.env.NODE_ENV === "development"
-      ? process.env.REACT_APP_FRONTEND_LOCAL
-      : process.env.REACT_APP_FRONTEND_PROD;
+  import.meta.env.DEV
+    ? import.meta.env.VITE_FRONTEND_LOCAL
+    : import.meta.env.VITE_FRONTEND_PROD;
 
        const logout = () => {
          removeCookie("token", { path: "/" });

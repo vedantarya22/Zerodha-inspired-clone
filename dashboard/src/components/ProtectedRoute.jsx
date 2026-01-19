@@ -15,14 +15,14 @@ function ProtectedRoute({children}) {
 
 
     const API_BASE =
-    process.env.NODE_ENV === "development"
-      ? process.env.REACT_APP_API_LOCAL
-      : process.env.REACT_APP_API_PROD;
+  import.meta.env.DEV
+    ? import.meta.env.VITE_API_LOCAL
+    : import.meta.env.VITE_API_PROD;
 
   const FRONTEND_BASE =
-    process.env.NODE_ENV === "development"
-      ? process.env.REACT_APP_FRONTEND_LOCAL
-      : process.env.REACT_APP_FRONTEND_PROD;
+  import.meta.env.DEV
+    ? import.meta.env.VITE_FRONTEND_LOCAL
+    : import.meta.env.VITE_FRONTEND_PROD;
 
   
   useEffect(()=>{
