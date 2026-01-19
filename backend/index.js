@@ -17,6 +17,8 @@ const url = process.env.MONGO_URL;
 
 const app = express();
 
+const isProd = process.env.NODE_ENV === "production";
+
 
 mongoose.connect(url,{
     useNewUrlParser : true,
@@ -29,7 +31,7 @@ app.listen(PORT,()=>{
 });
 
 app.use(cors({
-    origin : ["http://localhost:5174","http://localhost:5173"], // frontend app and dashboard app
+    origin : ["http://localhost:5174","http://localhost:5173", "https://kiteved.onrender.com","https://kiteved-dashboard.onrender.com"], // frontend app and dashboard app
     methods:["GET","POST","PUT","DELETE"],
     credentials:true,
 }));
@@ -210,11 +212,12 @@ app.use("/",authRoute);
 
 // })
 
+
 const cookieOptions = {
   httpOnly: true,
-  secure: false,     // because you are on localhost
-  sameSite: "Lax",   // required for cross-port cookies
-  path: "/",           
+  secure: isProd,                 // ✅ true only on https production
+  sameSite: isProd ? "None" : "Lax", // ✅ cross-site cookies need None
+  path: "/",
 };
 
 
