@@ -16,7 +16,7 @@ function Positions() {
     axios
       .get(`${API_BASE}/allPositions`)
       .then((res) => {
-        setAllOrders(res.data);
+        setAllPositions(res.data);
       })
       .catch((err) => console.log(err));
   }, []);
