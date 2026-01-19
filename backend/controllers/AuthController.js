@@ -9,7 +9,7 @@ const cookieOptions = {
   secure: isProd,                    // ✅ true on Render (https)
   sameSite: isProd ? "None" : "Lax",  // ✅ cross-site cookie allowed
   path: "/",
-  domain: isProd ? ".onrender.com" : undefined, // ✅ share across frontend+dashboard
+ 
 };
 
 
