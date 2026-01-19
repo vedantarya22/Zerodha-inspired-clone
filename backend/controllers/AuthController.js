@@ -27,7 +27,7 @@ module.exports.Signup = async(req,res,next)=>{
 
         res
         .status(201)
-        .json({message:"User signed in successfully",sucess:true,user});
+        .json({message:"User signed in successfully",success:true,user});
         next();
 
     }catch(err){
