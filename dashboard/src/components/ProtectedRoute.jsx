@@ -11,7 +11,7 @@ function ProtectedRoute({children}) {
    const navigate = useNavigate();
   const [cookies,removeCookie] = useCookies(["token"]);
     const [verified, setVerified] = useState("loading");
-     const {  logout } = useAuth();
+     
 
 
     const API_BASE =
@@ -29,10 +29,15 @@ function ProtectedRoute({children}) {
     const verifyCookie = async()=>{
        console.log("Cookies:", cookies);
        console.log("Token:", cookies.token);
+          // ⛔ DO NOTHING until cookie is resolved
+    if (cookies.token === undefined) {
+      return;
+    }
+
       if(!cookies.token){
-         console.log("NO TOKEN → redirecting");
+        
         setVerified(false);
-           logout();
+           window.location.replace(`${FRONTEND_BASE}/login`);
            return ;
           }
 
@@ -44,7 +49,7 @@ function ProtectedRoute({children}) {
           { withCredentials: true }
         );
             console.log("BACKEND RESPONSE:", data);
-          const {status,user} = data;
+          const {status} = data;
           setVerified(status);
           return status ? toast(`Welcome`,
             {position:"top-right",}) 
