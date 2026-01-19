@@ -9,7 +9,7 @@ function Team() {
       <div className="row mt-5">
         <div className="col-6 text-center">
           <img
-            src="/media/myPic.jpeg"
+            src="\media\myPic.jpeg"
             alt="founder img"
             style={{ borderRadius: "", width: "50%", marginBottom: "1rem" }}
           />
