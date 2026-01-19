@@ -25,44 +25,32 @@ function ProtectedRoute({children}) {
     : import.meta.env.VITE_FRONTEND_PROD;
 
   
-  useEffect(()=>{
-    const verifyCookie = async()=>{
-       console.log("Cookies:", cookies);
-       console.log("Token:", cookies.token);
-          // ⛔ DO NOTHING until cookie is resolved
-    if (cookies.token === undefined) {
-      return;
-    }
-
-      if(!cookies.token){
-        
-        setVerified(false);
-           window.location.replace(`${FRONTEND_BASE}/login`);
-           return ;
-          }
-
-          try{
-            console.log("SENDING TOKEN TO BACKEND…");
-           const { data } = await axios.post(
+    useEffect(() => {
+    const verify = async () => {
+      try {
+        const { data } = await axios.post(
           `${API_BASE}/`,
           {},
           { withCredentials: true }
         );
-            console.log("BACKEND RESPONSE:", data);
-          const {status} = data;
-          setVerified(status);
-          return status ? toast(`Welcome`,
-            {position:"top-right",}) 
-            : (removeCookie("token"),window.location.href = `${FRONTEND_BASE}/login`);
-          }catch(err){
-            setVerified(false);
-            removeCookie("token");
-            window.location.href = `${FRONTEND_BASE}/login`;
-          }
-        };
 
-    verifyCookie();
-  },[cookies.token]);
+        console.log("VERIFY RESPONSE:", data);
+
+        if (data.status) {
+          setVerified(true);
+        } else {
+          setVerified(false);
+          window.location.replace(`${FRONTEND_BASE}/login`);
+        }
+      } catch (err) {
+        console.log("VERIFY ERROR:", err);
+        setVerified(false);
+        window.location.replace(`${FRONTEND_BASE}/login`);
+      }
+    };
+
+    verify();
+  }, []);
 
     if (verified === "loading") {
     return (
@@ -82,7 +70,7 @@ function ProtectedRoute({children}) {
   }
     
   
-  return children;
+   return verified ? children : null;
 }
 
 export default ProtectedRoute;
