@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { Link } from "react-router-dom";
-
+import GeneralContext from "./GeneralContext";
 import axios from "axios";
 function Orders() {
-  const [allOrders, setAllOrders] = useState([]);
 
-  useEffect(() => {
-    const API_BASE =
-  import.meta.env.DEV
+  
+  const [allOrders, setAllOrders] = useState([]);
+   const API_BASE = import.meta.env.DEV
     ? import.meta.env.VITE_API_LOCAL
     : import.meta.env.VITE_API_PROD;
 
-    axios
-      .get(`${API_BASE}/allOrders`)
-      .then((res) => {
-        setAllOrders(res.data);
-      })
-      .catch((err) => console.log(err));
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/allOrders`, {
+        withCredentials: true,
+      });
+      setAllOrders(res.data);
+    } catch (err) {
+      console.log("Fetch orders failed:", err?.response?.data || err.message);
+    }
+  };
+
+   useEffect(() => {
+    fetchOrders();
+      const handler = () => fetchOrders();
+
+      window.addEventListener("order-created", handler); //calls fetchOrders when order created
+
+  return () => window.removeEventListener("order-created", handler);
   }, []);
 
   return (

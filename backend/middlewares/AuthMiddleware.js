@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
     
 module.exports.userVerification = (req,res)=>{
     const token = req.cookies.token
+    console.log("token check");
+    console.log(token);
     if(!token){
         return res.json({status:false})
     }
@@ -21,3 +23,35 @@ module.exports.userVerification = (req,res)=>{
         }
     })
 }
+
+
+module.exports.requireAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    console.log(token);
+
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token found" });
+    }
+
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+
+    const user = await UsersModel.findById(decoded.id).select("_id email");
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+
+    // attach user to request
+    req.user = {
+      id: user._id,
+      email: user.email,
+    };
+
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized / Invalid token" });
+  }
+};

@@ -5,9 +5,9 @@ const bcrypt = require("bcryptjs");
 const isProd = process.env.NODE_ENV === "production";
 
 const cookieOptions = {
-  httpOnly: true,                    // ✅ must be true
-  secure: isProd,                    // ✅ true on Render (https)
-  sameSite: isProd ? "None" : "Lax",  // ✅ cross-site cookie allowed
+  httpOnly: true,                    //  must be true
+  secure: isProd,                    //  true on Render (https)
+  sameSite: isProd ? "None" : "Lax",  //  cross-site cookie allowed
   path: "/",
  
 };

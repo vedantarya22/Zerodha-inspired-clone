@@ -6,24 +6,38 @@ import axios from "axios";
 import GeneralContext from "./GeneralContext"; // IMPORTANT: named import
 import "./BuyActionWindow.css";
 
-function BuyActionWindow({ stock }) {
-
-
+function BuyActionWindow({ stock}) {
 
   const generalContext = useContext(GeneralContext); 
   const unitPrice = stock.price || 0; // price per quantity
   const [stockQuantity, setStockQuantity] = useState(1);
   const [stockPrice, setStockPrice] = useState(unitPrice);
+  const {API_BASE} = generalContext;
 
-  const handleBuyClick = () => {
-    console.log("buy button clicked")
-    axios.post("http://localhost:3002/newOrder", {
-      name: stock.name,
-      qty: stockQuantity,
-      price: stockPrice,
-      mode: "BUY",
-    });
-    generalContext.closeBuyWindow();
+    if (!stock) return null;
+
+  const handleBuyClick = async() => {
+    try{
+
+      console.log("buy button clicked");
+
+      await axios.post(`${API_BASE}/newOrder`, {
+        name: stock.name,
+        qty: stockQuantity,
+        price: stockPrice,
+        mode: "BUY",
+      },
+      {withCredentials: true}
+    );
+
+  
+      window.dispatchEvent(new Event("order-created"));
+
+      generalContext.closeBuyWindow();
+    }catch(err) {
+       console.log("Order failed:", err?.response?.data || err.message);
+    alert("Order failed! Check console.");
+    }
   };
 
   const handleCancelClick = () => {
@@ -76,9 +90,9 @@ function BuyActionWindow({ stock }) {
       <div className="buttons">
         <span>Margin required 140.65</span>
         <div>
-          <Link className="btn btn-blue" onClick={handleBuyClick}>
+          <button className="btn btn-blue" onClick={handleBuyClick}>
             Buy
-          </Link>
+          </button>
           <Link to="" className="btn btn-grey" onClick={handleCancelClick}>
             Cancel
           </Link>

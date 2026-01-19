@@ -23,7 +23,7 @@ function Menu() {
     return ( 
         
         <div className="menu-container">
-            <img src="public\logo.png" alt="kite logo"  style={{width:"50px"}}/>
+            <img src="\public\logo.png" alt="kite logo"  style={{width:"50px"}}/>
            
            <div className="menus">
             <ul>

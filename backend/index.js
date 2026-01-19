@@ -19,6 +19,8 @@ const app = express();
 
 const isProd = process.env.NODE_ENV === "production";
 
+const {requireAuth} = require("./middlewares/AuthMiddleware");
+
 
 mongoose.connect(url,{
     useNewUrlParser : true,
@@ -231,20 +233,34 @@ app.get("/allPositions",async(req,res)=>{ // end points for all positions
     res.json(allPositions);
 });
 
-app.post("/newOrder",async(req,res)=>{
-    let newOrder = new OrdersModel({
-        name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode : req.body.mode,
-    });
-    newOrder.save();
-    res.send("order saved");
+app.post("/newOrder",requireAuth,async(req,res)=>{
+
+    try{
+
+        let newOrder = new OrdersModel({
+              userId: req.user.id,
+            name: req.body.name,
+        qty: req.body.qty,
+        price: req.body.price,
+        mode : req.body.mode,
+        });
+        await newOrder.save();
+        res.send("order saved");
+    } catch (err) {
+    res.status(500).json({ success: false, message: "Order failed" });
+  }
 });
 
-app.get("/allOrders",async(req,res)=>{
-    let allOrders = await OrdersModel.find({});
-    res.json(allOrders);
+app.get("/allOrders",requireAuth,async(req,res)=>{
+    try{
+          let allOrders = await OrdersModel.find({
+      userId: req.user.id, // ✅ only this user's orders
+    });
+        res.json(allOrders);
+
+    } catch (err) {
+    res.status(500).json({ message: "Failed to fetch orders" });
+  }
 })
 
 app.get("/clear",(req,res)=>{
