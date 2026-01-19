@@ -28,6 +28,7 @@ function ProtectedRoute({children}) {
   useEffect(()=>{
     const verifyCookie = async()=>{
        console.log("Cookies:", cookies);
+       console.log("Token:", cookies.token);
       if(!cookies.token){
          console.log("NO TOKEN → redirecting");
         setVerified(false);
@@ -56,7 +57,7 @@ function ProtectedRoute({children}) {
         };
 
     verifyCookie();
-  },[cookies,navigate,removeCookie]);
+  },[cookies.token]);
 
     if (verified === "loading") {
     return (

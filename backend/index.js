@@ -218,6 +218,7 @@ const cookieOptions = {
   secure: isProd,                 // ✅ true only on https production
   sameSite: isProd ? "None" : "Lax", // ✅ cross-site cookies need None
   path: "/",
+   domain: isProd ? ".onrender.com" : undefined,
 };
 
 
