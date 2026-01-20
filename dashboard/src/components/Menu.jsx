@@ -8,7 +8,7 @@ function Menu() {
 
     const [selectedMenu,setSelectedMenu] = useState(0);
     const [isProfileDropdownOpen,setIsProfileDropdownOpen] = useState(false);
-  const { logout } = useAuth();
+   const { logout, isLoggingOut } = useAuth();
     const handleMenuClick =(index)=>{
         setSelectedMenu(index);
     }
