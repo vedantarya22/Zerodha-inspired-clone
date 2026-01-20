@@ -10,6 +10,7 @@ const cookieOptions = {
   sameSite: isProd ? "None" : "Lax",  //  cross-site cookie allowed
   path: "/",
  maxAge: 7 * 24 * 60 * 60 * 1000,
+ domain: isProd ? undefined : "localhost"
 };
 
 

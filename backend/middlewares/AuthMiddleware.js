@@ -5,24 +5,53 @@ const jwt = require("jsonwebtoken");
 
 
     
-module.exports.userVerification = (req,res)=>{
-    const token = req.cookies.token
-    console.log("token check");
-    console.log(token);
-    if(!token){
-        return res.json({status:false})
+module.exports.userVerification = (req, res) => {
+    const token = req.cookies.token;
+    
+    console.log("=== VERIFICATION CHECK ===");
+    console.log("Token exists:", !!token);
+    
+    if (!token) {
+        console.log("❌ No token found");
+        return res.json({status: false, message: "No token provided"});
     }
 
-    jwt.verify(token,process.env.TOKEN_KEY,async(err,data)=>{
-        if(err){
-            return res.json({status:false})
-        }else{
-            const user = await UsersModel.findById(data.id)
-            if(user) return res.json({status:true,user})
-                else return res.json({status:false})
+    jwt.verify(token, process.env.TOKEN_KEY, async(err, data) => {
+        if (err) {
+            console.log("❌ JWT verify error:", err.message);
+            
+            // Clear the expired/invalid cookie
+            res.clearCookie("token", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+                path: "/",
+            });
+            
+            return res.json({
+                status: false, 
+                message: err.name === "TokenExpiredError" ? "Token expired" : "Invalid token"
+            });
         }
-    })
-}
+        
+        try {
+            const user = await UsersModel.findById(data.id);
+            if (user) {
+                console.log(" User verified:", user.email);
+                return res.json({
+                    status: true, 
+                    user: {id: user._id, email: user.email}
+                });
+            } else {
+                console.log("❌ User not found");
+                return res.json({status: false, message: "User not found"});
+            }
+        } catch (dbErr) {
+            console.error("❌ Database error:", dbErr);
+            return res.json({status: false, message: "Server error"});
+        }
+    });
+};
 
 
 module.exports.requireAuth = async (req, res, next) => {

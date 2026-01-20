@@ -39,8 +39,12 @@ function ProtectedRoute({children}) {
         if (data.status) {
           setVerified(true);
         } else {
-          setVerified(false);
-          window.location.replace(`${FRONTEND_BASE}/login`);
+            console.log(" Verification failed:", data.message);
+           
+            setVerified(false);
+           setTimeout(() => {
+                    window.location.replace(`${FRONTEND_BASE}/login`);
+                }, 1000);
         }
       } catch (err) {
         console.log("VERIFY ERROR:", err);

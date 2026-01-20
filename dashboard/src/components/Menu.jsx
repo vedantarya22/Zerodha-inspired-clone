@@ -17,6 +17,11 @@ function Menu() {
         setIsProfileDropdownOpen(!isProfileDropdownOpen);
     }
 
+     const handleLogout = async () => {
+        setIsLoggingOut(true);
+        await logout();
+        // No need to set isLoggingOut to false because page will redirect
+    };
     const menuClass = "menu";
     const activeMenuClass = "menu selected";
 
@@ -61,9 +66,9 @@ function Menu() {
                 </li>
             </ul>
             <hr />
-            <div className="profile" onClick={logout}>
+            <div className="profile" onClick={handleLogout}>
                 <div className="avatar">ZU</div>
-                <p className='username'>LOGOUT</p>
+                <p className='username'> {isLoggingOut ? "LOGGING OUT..." : "LOGOUT"}</p>
             </div>
             {isProfileDropdownOpen}
            </div>
