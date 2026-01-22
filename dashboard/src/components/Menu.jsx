@@ -18,9 +18,8 @@ function Menu() {
     }
 
      const handleLogout = async () => {
-        setIsLoggingOut(true);
         await logout();
-        // No need to set isLoggingOut to false because page will redirect
+     
     };
     const menuClass = "menu";
     const activeMenuClass = "menu selected";
