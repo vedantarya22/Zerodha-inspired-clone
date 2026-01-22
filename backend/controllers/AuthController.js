@@ -7,10 +7,9 @@ const isProd = process.env.NODE_ENV === "production";
 const cookieOptions = {
   httpOnly: true,                    //  must be true 
   secure: isProd,                    //  true on Render (https)
-  sameSite: isProd ? "None" : "Lax",  //  cross-site cookie allowed
-  path: "/",
+  sameSite: isProd ? "none" : "lax",  //  cross-site cookie allowed
+  path : "/",
  maxAge: 7 * 24 * 60 * 60 * 1000,
- domain: isProd ? undefined : "localhost"
 };
 
 
@@ -38,6 +37,7 @@ module.exports.Signup = async(req,res,next)=>{
         const user = await UsersModel.create({email,password});
         const token = createSecretToken(user._id);
           res.cookie("token", token, cookieOptions);
+          console.log("Set-Cookie header:", res.getHeader("Set-Cookie"));
 
         return res.status(201).json({
             message:"User signed in successfully",
