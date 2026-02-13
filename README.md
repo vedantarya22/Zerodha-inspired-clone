@@ -1,7 +1,9 @@
+
+https://kiteved.onrender.com
+
 ** Zerodha Clone**
 
-HERE IS THE LINK TO THE WEBSITE
-https://kiteved.onrender.com
+
 
 
 A full-stack stock trading platform clone inspired by Zerodha, built to simulate real-world trading dashboard functionality and secure user authentication.
