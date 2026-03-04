@@ -69,6 +69,11 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+
+app.get("/",async(req,res)=>{
+  res.send("successful backend running");
+})
+
 app.get("/allHoldings", async (req, res) => {
   // end points for holdings
   let allHoldings = await HoldingsModel.find({});
